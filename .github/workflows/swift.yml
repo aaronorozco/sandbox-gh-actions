@@ -23,7 +23,7 @@ jobs:
     - name: Run Tests
       run: |
         set -o pipefail
-        xcodebuild clean test \
+        xcodebuild clean build \
           -project sandbox-gh-actions.xcodeproj \
           -scheme sandbox-gh-actions \
-          -destination generic/platform=iOS
+          -destination 'platform=iOS Simulator,name=Iphone 13,OS=latest'
