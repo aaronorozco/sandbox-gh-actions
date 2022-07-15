@@ -11,27 +11,27 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_13.3.app/Contents/Developer
   
 jobs:
-main:
-  name: Review, Lint, Verify
-  runs-on: macos-12
-  steps:
-    - name: git checkout
-      uses: actions/checkout@v3
-      
-    - name: ruby versions
-      run: |
-        ruby --version
-        gem --version
-        bundler --version
-        
-    # https://github.com/ruby/setup-ruby
-    - name: ruby setup
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7
-        bundler-cache: true
-    
-    - name: Danger
-      run: danger-swift ci
-      env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  main:
+    name: Review, Lint, Verify
+    runs-on: macos-12
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v3
+
+      - name: ruby versions
+        run: |
+          ruby --version
+          gem --version
+          bundler --version
+
+      # https://github.com/ruby/setup-ruby
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+
+      - name: Danger
+        run: danger-swift ci
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
