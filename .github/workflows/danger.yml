@@ -13,23 +13,23 @@ env:
 jobs:
   main:
     name: Review, Lint, Verify
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     steps:
       - name: git checkout
         uses: actions/checkout@v3
 
-#       - name: ruby versions
-#         run: |
-#           ruby --version
-#           gem --version
-#           bundler --version
+      - name: ruby versions
+        run: |
+          ruby --version
+          gem --version
+          bundler --version
 
-#       # https://github.com/ruby/setup-ruby
-#       - name: ruby setup
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: 3.0.4
-#           bundler-cache: true
+      # https://github.com/ruby/setup-ruby
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+           ruby-version: 3.0.4
+           bundler-cache: true
 
       - name: Set Default Scheme
         run: default="sandbox-gh-actions"
@@ -49,7 +49,7 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest'
 
       - name: Danger
-        uses: danger/swift@3.3.0
+        run: danger-swift ci
         with:
             args: --failOnErrors --no-publish-check
         env: 
