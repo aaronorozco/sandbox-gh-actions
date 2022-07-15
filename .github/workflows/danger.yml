@@ -28,10 +28,10 @@ jobs:
       - name: ruby setup
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.0.4
           bundler-cache: true
 
       - name: Danger
-        run: danger-swift ci
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bundle exec danger --verbose
