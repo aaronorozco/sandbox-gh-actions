@@ -26,4 +26,4 @@ jobs:
         xcodebuild clean test \
           -project sandbox-gh-actions.xcodeproj \
           -scheme sandbox-gh-actions \
-          -destination 'platform=iOS Simulator,name=Iphone 13,OS=latest'
+          -destination generic/platform=iOS
