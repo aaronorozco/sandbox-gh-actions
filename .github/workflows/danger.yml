@@ -30,6 +30,6 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest'
 
       - name: Danger
-        run: danger-swift ci
+        run: swift run danger-swift ci
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
