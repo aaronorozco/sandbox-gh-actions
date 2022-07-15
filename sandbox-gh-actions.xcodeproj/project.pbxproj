@@ -16,6 +16,7 @@
 		DA6C01B52881E194005D86DB /* sandbox_gh_actionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6C01B42881E194005D86DB /* sandbox_gh_actionsTests.swift */; };
 		DA6C01BF2881E194005D86DB /* sandbox_gh_actionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6C01BE2881E194005D86DB /* sandbox_gh_actionsUITests.swift */; };
 		DA6C01C12881E194005D86DB /* sandbox_gh_actionsUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6C01C02881E194005D86DB /* sandbox_gh_actionsUITestsLaunchTests.swift */; };
+		DA6C01CE2881F269005D86DB /* DangerDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6C01CD2881F269005D86DB /* DangerDummy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		DA6C01BA2881E194005D86DB /* sandbox-gh-actionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "sandbox-gh-actionsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA6C01BE2881E194005D86DB /* sandbox_gh_actionsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sandbox_gh_actionsUITests.swift; sourceTree = "<group>"; };
 		DA6C01C02881E194005D86DB /* sandbox_gh_actionsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sandbox_gh_actionsUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		DA6C01CD2881F269005D86DB /* DangerDummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DangerDummy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				DA6C01A22881E193005D86DB /* Assets.xcassets */,
 				DA6C01A72881E194005D86DB /* Persistence.swift */,
 				DA6C01A92881E194005D86DB /* sandbox_gh_actions.xcdatamodeld */,
+				DA6C01CD2881F269005D86DB /* DangerDummy.swift */,
 				DA6C01A42881E193005D86DB /* Preview Content */,
 			);
 			path = "sandbox-gh-actions";
@@ -265,6 +268,7 @@
 			files = (
 				DA6C01AB2881E194005D86DB /* sandbox_gh_actions.xcdatamodeld in Sources */,
 				DA6C01A82881E194005D86DB /* Persistence.swift in Sources */,
+				DA6C01CE2881F269005D86DB /* DangerDummy.swift in Sources */,
 				DA6C01A12881E193005D86DB /* ContentView.swift in Sources */,
 				DA6C019F2881E193005D86DB /* sandbox_gh_actionsApp.swift in Sources */,
 			);
