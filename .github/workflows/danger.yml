@@ -18,27 +18,11 @@ jobs:
       - name: git checkout
         uses: actions/checkout@v3
 
-      - name: ruby versions
-        run: |
-          ruby --version
-          gem --version
-          bundler --version
-
-      # https://github.com/ruby/setup-ruby
-      - name: ruby setup
-        uses: ruby/setup-ruby@v1
-        with:
-           ruby-version: 3.0.4
-           bundler-cache: true
-
       - name: Set Default Scheme
         run: default="sandbox-gh-actions"
 
       - name: Show the currently detailed version of Xcode for CLI
         run: xcode-select -p
-
-      - name: Check Sims
-        run: xcrun simctl list &>/dev/null
 
       - name: Run Tests
         run: |
