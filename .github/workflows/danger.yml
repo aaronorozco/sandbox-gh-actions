@@ -24,13 +24,13 @@ jobs:
       - name: Install Danger
         run: brew install danger/tap/danger-js
 
-      - name: Run Tests
-        run: |
-          set -o pipefail
-          xcodebuild clean test \
-            -project sandbox-gh-actions.xcodeproj \
-            -scheme sandbox-gh-actions \
-            -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest'
+#      - name: Run Tests
+#        run: |
+#          set -o pipefail
+#          xcodebuild clean test \
+#            -project sandbox-gh-actions.xcodeproj \
+#            -scheme sandbox-gh-actions \
+#            -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest'
 
       - name: Danger
         run: swift run danger-swift ci --verbose --failOnErrors
