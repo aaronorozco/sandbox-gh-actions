@@ -6,9 +6,6 @@ name: Danger
 on:
   pull_request:
     types: [synchronize, opened, reopened, labeled, unlabeled, edited]
-
-env:
-  DEVELOPER_DIR: /Applications/Xcode_13.3.app/Contents/Developer
   
 jobs:
   main:
