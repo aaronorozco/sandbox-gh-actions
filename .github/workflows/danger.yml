@@ -50,7 +50,5 @@ jobs:
 
       - name: Danger
         run: danger-swift ci
-        with:
-            args: --failOnErrors --no-publish-check
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
