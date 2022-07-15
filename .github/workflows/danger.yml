@@ -20,6 +20,9 @@ jobs:
 
       - name: Show the currently detailed version of Xcode for CLI
         run: xcode-select -p
+        
+      - name: Install Danger
+        run: brew install danger/tap/danger-js
 
       - name: Run Tests
         run: |
@@ -30,6 +33,6 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest'
 
       - name: Danger
-        run: swift run danger-swift ci
+        run: swift run danger-swift ci --verbose --failOnErrors
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
