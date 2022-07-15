@@ -31,22 +31,22 @@ jobs:
 #           ruby-version: 3.0.4
 #           bundler-cache: true
 
-    - name: Set Default Scheme
-      run: default="sandbox-gh-actions"
-    
-    - name: Show the currently detailed version of Xcode for CLI
-      run: xcode-select -p
-      
-    - name: Check Sims
-      run: xcrun simctl list &>/dev/null
-      
-    - name: Run Tests
-      run: |
-        set -o pipefail
-        xcodebuild clean test \
-          -project sandbox-gh-actions.xcodeproj \
-          -scheme sandbox-gh-actions \
-          -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest'
+      - name: Set Default Scheme
+        run: default="sandbox-gh-actions"
+
+      - name: Show the currently detailed version of Xcode for CLI
+        run: xcode-select -p
+
+      - name: Check Sims
+        run: xcrun simctl list &>/dev/null
+
+      - name: Run Tests
+        run: |
+          set -o pipefail
+          xcodebuild clean test \
+            -project sandbox-gh-actions.xcodeproj \
+            -scheme sandbox-gh-actions \
+            -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest'
 
       - name: Danger
         uses: danger/swift@3.3.0
