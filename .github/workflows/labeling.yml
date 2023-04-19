@@ -1,0 +1,80 @@
+name: PR Labeling
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  update_labels:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the repository to access its contents
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      # Set up Node.js to run JavaScript code
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      # Install the gh CLI tool to interact with GitHub API
+      - name: Install gh CLI
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt update
+          sudo apt install gh
+
+      # Authenticate the gh CLI with a GitHub token
+      - name: Authenticate gh CLI
+        run: echo ${{ secrets.GH_TOKEN }} | gh auth login --with-token
+
+      # Get the number of approvals for the current PR (Rule 1)
+      - name: Get number of approvals
+        id: get_approvals
+        run: |
+          APPROVALS=$(gh pr reviews ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json state -q 'reviews: .[].state | select(. == "APPROVED") | length' | jq -s 'length')
+          echo "Number of approvals: $APPROVALS"
+          echo "::set-output name=approvals::$APPROVALS"
+
+      # Update labels based on the number of approvals (Rules 3, 4, 5, and 6)
+      - name: Update labels
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { context, github } = require("@actions/github");
+
+            const prNumber = context.payload.pull_request.number;
+            const approvals = parseInt('${{ steps.get_approvals.outputs.approvals }}');
+            const labelsToRemove = [];
+            for (let i = 1; i <= 3; i++) {
+              labelsToRemove.push(`Needs ${i} review`);
+            }
+
+            // Remove any existing "Needs x review" labels
+            await github.issues.removeLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              labels: labelsToRemove
+            });
+
+            // Add the appropriate "Needs x review" label based on the number of approvals
+            if (approvals < 3) {
+              await github.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: [`Needs ${3 - approvals} review`] // Rule 3
+              });
+            } else {
+              // Add the "Approved" label when the PR has 3 approvals (Rule 6)
+              await github.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: ['Approved']
+              });
+            }
