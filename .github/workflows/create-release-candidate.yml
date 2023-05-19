@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Bump version and create tag
+    - name: Bump Release Candidate and Create Tag
       id: create_tag
       run: |
         # Extract version from branch name
@@ -25,14 +25,12 @@ jobs:
                   "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/tags" | \
                   jq -r '.[] | select(.ref | contains("'"${VERSION}-${RC_PREFIX}"'"))' | \
                   jq -r .ref | sed 's/.*rc//g' | sort -rn | head -n 1)
-
         # If there were no previous RCs for this version, start at 1, otherwise increment
         if [ -z "$LATEST_RC" ]; then
           RC_NUM=1
         else
           RC_NUM=$((LATEST_RC + 1))
         fi
-
         # Export Version Number
         NEW_VERSION="v${VERSION}"
         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
@@ -48,23 +46,39 @@ jobs:
     - name: Push tag
       run: |
         git push origin ${{ env.NEW_TAG }}
+
+    - name: Determine Previous Tag
+      id: previous_tag
+      run: |
+        VERSION=$(echo ${GITHUB_REF##*/} | grep -oP '\d+\.\d+\.\d+')
+        RC_PREFIX="rc"
         
+        # Get previous tag based on current RC number
+        if [ "${{ env.RC_NUM }}" = "1" ]; then
+          # Get the latest non-rc tag (last official release)
+          PREVIOUS_TAG=$(git tag --list "[!-]*" | sort --version-sort | tail -1)
+        else
+          PREVIOUS_RC_NUM=$((RC_NUM - 1))
+          PREVIOUS_TAG="v${VERSION}-${RC_PREFIX}${PREVIOUS_RC_NUM}"
+        fi
+        echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
+
     - name: Build Changelog
       id: build_changelog
       uses: mikepenz/release-changelog-builder-action@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        configuration: ".github/changelog-configuration.json" # adjust this to your config file location
-        ignorePreReleases: "false"
-        
+        configuration: ".github/changelog-configuration.json"
+        fromTag: ${{ env.PREVIOUS_TAG }}
+        toTag: ${{ env.NEW_TAG }}
+
     - name: Create Pre Release on Github
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1
       with:
-        tag_name: ${{ env.NEW_TAG }}
-        release_name: ${{ env.NEW_VERSION }} Release Candidate (${{ env.RC_NUM }})
         body: ${{ steps.build_changelog.outputs.changelog }}
         draft: false
+        name: ${{ env.NEW_VERSION }} Release Candidate (${{ env.RC_NUM }})
         prerelease: true
+        tag: ${{ env.NEW_TAG }}
+        token: ${{ secrets.GITHUB_TOKEN }}
