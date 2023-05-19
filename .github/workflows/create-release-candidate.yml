@@ -6,7 +6,7 @@ on:
       - release/*
 
 jobs:
-  build:
+  release-candidate:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,6 +33,9 @@ jobs:
         NEW_TAG="${VERSION}-${RC_PREFIX}${RC_NUM}"
         echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
         git tag $NEW_TAG
+        
+        # Expose RC_NUM
+        echo "RC_NUM=$RC_NUM" >> $GITHUB_ENV
 
     - name: Push tag
       run: |
@@ -45,6 +48,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions
       with:
         tag_name: ${{ env.NEW_TAG }}
-        release_name: Pre-Release ${{ env.NEW_TAG }}
+        release_name: ${{ env.NEW_TAG }} Release Candidate (${{ env.RC_NUM }}
         draft: false
         prerelease: true
