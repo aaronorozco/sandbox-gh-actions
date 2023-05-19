@@ -65,7 +65,7 @@ jobs:
 
     - name: Build Changelog
       id: build_changelog
-      uses: mikepenz/release-changelog-builder-action@v2
+      uses: mikepenz/release-changelog-builder-action@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         fromTag: ${{ env.PREVIOUS_TAG }}
