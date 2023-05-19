@@ -47,36 +47,27 @@ jobs:
       run: |
         git push origin ${{ env.NEW_TAG }}
 
-    - name: Determine Previous Tag
-      id: previous_tag
-      run: |
-        VERSION=$(echo ${GITHUB_REF##*/} | grep -oP '\d+\.\d+\.\d+')
-        RC_PREFIX="rc"
-        
-        # Get previous tag based on current RC number
-        if [ "${{ env.RC_NUM }}" = "1" ]; then
-          # Get the latest non-rc tag (last official release)
-          PREVIOUS_TAG=$(git tag --list "[!-]*" | sort --version-sort | tail -1)
-        else
-          PREVIOUS_RC_NUM=$((RC_NUM - 1))
-          PREVIOUS_TAG="v${VERSION}-${RC_PREFIX}${PREVIOUS_RC_NUM}"
-        fi
-        echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
-
-    - name: Build Changelog
-      id: build_changelog
-      uses: mikepenz/release-changelog-builder-action@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        fromTag: ${{ env.PREVIOUS_TAG }}
-        toTag: ${{ env.NEW_TAG }} 
+#     - name: Determine Previous Tag
+#       id: previous_tag
+#       run: |
+#         VERSION=$(echo ${GITHUB_REF##*/} | grep -oP '\d+\.\d+\.\d+')
+#         RC_PREFIX="rc"
+#         # Get previous tag based on current RC number
+#         if [ "${{ env.RC_NUM }}" = "1" ]; then
+#           # Get the latest non-rc tag (last official release)
+#           PREVIOUS_TAG=$(git tag --list "[!-]*" | sort --version-sort | tail -1)
+#         else
+#           PREVIOUS_RC_NUM=$((RC_NUM - 1))
+#           PREVIOUS_TAG="v${VERSION}-${RC_PREFIX}${PREVIOUS_RC_NUM}"
+#         fi
+#         echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
 
     - name: Create Pre Release on Github
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        body: ${{ steps.build_changelog.outputs.changelog }}
         draft: false
+        generateReleaseNotes: true
         name: ${{ env.NEW_VERSION }} Release Candidate (${{ env.RC_NUM }})
         prerelease: true
         tag: ${{ env.NEW_TAG }}
