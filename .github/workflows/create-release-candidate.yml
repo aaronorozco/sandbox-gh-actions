@@ -68,7 +68,6 @@ jobs:
       uses: mikepenz/release-changelog-builder-action@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        configuration: ".github/changelog-configuration.json"
         fromTag: ${{ env.PREVIOUS_TAG }}
         toTag: ${{ env.NEW_TAG }}
 
