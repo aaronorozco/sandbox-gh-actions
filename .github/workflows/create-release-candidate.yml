@@ -50,6 +50,9 @@ jobs:
     - name: Determine Previous Tag
       id: previous_tag
       run: |
+        VERSION=$(echo ${GITHUB_REF##*/} | grep -oP '\d+\.\d+\.\d+')
+        RC_PREFIX="rc"
+        
         # Get previous tag based on current RC number
         if [ "${{ env.RC_NUM }}" = "1" ]; then
           # Get the latest non-rc tag (last official release)
