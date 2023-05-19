@@ -65,5 +65,6 @@ jobs:
       with:
         tag_name: ${{ env.NEW_TAG }}
         release_name: ${{ env.NEW_VERSION }} Release Candidate (${{ env.RC_NUM }})
+        body: ${{ steps.build_changelog.outputs.changelog }}
         draft: false
         prerelease: true
