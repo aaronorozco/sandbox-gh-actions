@@ -6,13 +6,13 @@ on:
       - release/*
 
 jobs:
-  build:
+  release-candidate:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
-      
+      uses: actions/checkout@v3
+
     - name: Bump version and create tag
       id: create_tag
       run: |
@@ -21,22 +21,41 @@ jobs:
         RC_PREFIX="rc"
         
         # Get the latest RC number for this version
-        RC_NUM=$(git tag -l "${VERSION}-${RC_PREFIX}*" | sed 's/.*rc//g' | sort -n | tail -1)
+        LATEST_RC=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                  "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/tags" | \
+                  jq -r '.[] | select(.ref | contains("'"${VERSION}-${RC_PREFIX}"'"))' | \
+                  jq -r .ref | sed 's/.*rc//g' | sort -rn | head -n 1)
+
         # If there were no previous RCs for this version, start at 1, otherwise increment
-        if [ -z "$RC_NUM" ]; then
+        if [ -z "$LATEST_RC" ]; then
           RC_NUM=1
         else
-          ((RC_NUM++))
+          RC_NUM=$((LATEST_RC + 1))
         fi
 
-        # Create the new tag
-        NEW_TAG="${VERSION}-${RC_PREFIX}${RC_NUM}"
+        # Export Version Number
+        NEW_VERSION="v${VERSION}"
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+        
+        # Create and export the new tag
+        NEW_TAG="v${VERSION}-${RC_PREFIX}${RC_NUM}"
         echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
         git tag $NEW_TAG
+        
+        # Expose RC_NUM
+        echo "RC_NUM=$RC_NUM" >> $GITHUB_ENV
 
     - name: Push tag
       run: |
         git push origin ${{ env.NEW_TAG }}
+        
+    - name: Build Changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        configuration: ".github/changelog-configuration.json" # adjust this to your config file location
+        ignorePreReleases: "false"
         
     - name: Create Pre Release on Github
       id: create_release
@@ -45,6 +64,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions
       with:
         tag_name: ${{ env.NEW_TAG }}
-        release_name: Pre-Release ${{ env.NEW_TAG }}
+        release_name: ${{ env.NEW_VERSION }} Release Candidate (${{ env.RC_NUM }})
         draft: false
         prerelease: true

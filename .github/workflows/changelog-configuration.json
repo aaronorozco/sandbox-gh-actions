@@ -1,0 +1,30 @@
+{
+  "categories": [
+    {
+      "title": "🚀 Features",
+      "labels": ["feature", "enhancement"]
+    },
+    {
+      "title": "🐛 Bug Fixes",
+      "labels": ["bug"]
+    },
+    {
+      "title": "🧰 Maintenance",
+      "labels": ["chore", "refactor", "style", "test", "build", "ci", "docs"]
+    }
+  ],
+  "sort": "ASC",
+  "template": {
+    "issue": "- {{name}} [{{text}}]({{url}})",
+    "pr": "- {{name}} [{{text}}]({{url}})",
+    "empty": "No changes to show."
+  },
+  "transformers": {
+    "CHANGELOG": "Changelog"
+  },
+  "dataSource": "prs",
+  "ignoreIssuesWith": ["duplicate", "wontfix", "invalid"],
+  "changelogFilename": "CHANGELOG.md",
+  "useVersionFilter": true,
+  "versionFilterBy": "milestone"
+}
