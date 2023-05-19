@@ -17,11 +17,11 @@ jobs:
       id: create_tag
       run: |
         # Extract version from branch name
-        VERSION=$(echo ${GITHUB_REF##*/} | grep -oP 'v\d+\.\d+\.\d+')
+        VERSION=$(echo ${GITHUB_REF##*/} | grep -oP '\d+\.\d+\.\d+')
         RC_PREFIX="rc"
         
         # Get the latest RC number for this version
-        RC_NUM=$(git tag -l "${VERSION}-${RC_PREFIX}*" | sed 's/.*rc//g' | sort -n | tail -1)
+        RC_NUM=$(git tag -l "v${VERSION}-${RC_PREFIX}*" | sed 's/.*rc//g' | sort -n | tail -1)
         # If there were no previous RCs for this version, start at 1, otherwise increment
         if [ -z "$RC_NUM" ]; then
           RC_NUM=1
@@ -30,7 +30,7 @@ jobs:
         fi
 
         # Create the new tag
-        NEW_TAG="${VERSION}-${RC_PREFIX}${RC_NUM}"
+        NEW_TAG="v${VERSION}-${RC_PREFIX}${RC_NUM}"
         echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
         git tag $NEW_TAG
         
