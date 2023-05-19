@@ -12,7 +12,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
+
     - name: Bump version and create tag
       id: create_tag
       run: |
@@ -48,6 +48,14 @@ jobs:
     - name: Push tag
       run: |
         git push origin ${{ env.NEW_TAG }}
+        
+    - name: Build Changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        configuration: ".github/changelog-configuration.json" # adjust this to your config file location
+        ignorePreReleases: "false"
         
     - name: Create Pre Release on Github
       id: create_release
