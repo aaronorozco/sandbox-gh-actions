@@ -21,12 +21,16 @@ jobs:
         RC_PREFIX="rc"
         
         # Get the latest RC number for this version
-        RC_NUM=$(git tag -l "v${VERSION}-${RC_PREFIX}*" | sed 's/.*rc//g' | sort -n | tail -1)
+        LATEST_RC=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                  "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/tags" | \
+                  jq -r '.[] | select(.ref | contains("'"${VERSION}-${RC_PREFIX}"'"))' | \
+                  jq -r .ref | sed 's/.*rc//g' | sort -rn | head -n 1)
+
         # If there were no previous RCs for this version, start at 1, otherwise increment
-        if [ -z "$RC_NUM" ]; then
+        if [ -z "$LATEST_RC" ]; then
           RC_NUM=1
         else
-          ((RC_NUM++))
+          RC_NUM=$((LATEST_RC + 1))
         fi
 
         # Create the new tag
