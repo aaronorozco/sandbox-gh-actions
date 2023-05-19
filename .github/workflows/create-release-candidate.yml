@@ -1,0 +1,50 @@
+name: Create Pre-Release
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Bump version and create tag
+      id: create_tag
+      run: |
+        # Extract version from branch name
+        VERSION=$(echo ${GITHUB_REF##*/} | grep -oP 'v\d+\.\d+\.\d+')
+        RC_PREFIX="rc"
+        
+        # Get the latest RC number for this version
+        RC_NUM=$(git tag -l "${VERSION}-${RC_PREFIX}*" | sed 's/.*rc//g' | sort -n | tail -1)
+        # If there were no previous RCs for this version, start at 1, otherwise increment
+        if [ -z "$RC_NUM" ]; then
+          RC_NUM=1
+        else
+          ((RC_NUM++))
+        fi
+
+        # Create the new tag
+        NEW_TAG="${VERSION}-${RC_PREFIX}${RC_NUM}"
+        echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+        git tag $NEW_TAG
+
+    - name: Push tag
+      run: |
+        git push origin ${{ env.NEW_TAG }}
+        
+    - name: Create Pre Release on Github
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions
+      with:
+        tag_name: ${{ env.NEW_TAG }}
+        release_name: Pre-Release ${{ env.NEW_TAG }}
+        draft: false
+        prerelease: true
