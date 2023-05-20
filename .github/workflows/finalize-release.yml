@@ -1,0 +1,36 @@
+name: Finalize Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version number to finalize: x.x.x'
+        required: true
+        type: string
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: Tag release
+        run: |
+          git fetch origin release/${{ inputs.version }}
+          git checkout release/${{ inputs.version }}
+          git tag v${{ inputs.version }}
+          git push origin v${{ inputs.version }}
+
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          generateReleaseNotes: true
+          name: ${{ inputs.version }}
+          prerelease: false
+          tag: "v${{ env.NEW_TAG }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
